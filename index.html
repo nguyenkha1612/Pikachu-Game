@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Pokemon</title>
+    <link rel="stylesheet" href="./assets/css/styles.css"/>
+</head>
+<body>
+<div id="main-container">
+
+    <div class="container__main">
+        <div class="main__header">
+            <div class="time-bar">
+                <div class="time-bar__time-remaining"></div>
+            </div>
+        </div>
+        <div class="main__game-board main__game-board-js"></div>
+    </div>
+    <div class="container__toolbar">
+        <div class="toolbar__stage">
+            Stage 1
+        </div>
+        <div class="toolbar__score">
+            Your score: 0
+        </div>
+        <div class="toolbar__buttons">
+            <div class="button-wrapper">
+                <button id="swap" class="tool-btn toolbar__swap"></button>
+            </div>
+            <div class="button-wrapper">
+                <button id="boom" class="tool-btn toolbar__boom"></button>
+            </div>
+            <div class="button-wrapper">
+                <button id="time" class="tool-btn toolbar__time"></button>
+            </div>
+            <div class="button-wrapper">
+                <button id="surrender" class="tool-btn toolbar__surrender"></button>
+            </div>
+        </div>
+        <audio controls autoplay loop>
+            <source src="./assets/audio/pikachu_audio_game.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+    <!-- Popup -->
+    <!-- Time out -->
+    <div class="popup-overlay popup-overlay-timeout">
+        <div class="popup popup-timeout">
+            <div class="title">
+                Time out
+            </div>
+            <div class="message">
+                Your time is up!
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="btn-restart popup-btn-js">Restart</button>
+            </div>
+        </div>
+    </div>
+    <!-- Buy time -->
+    <div class="popup-overlay popup-overlay-time">
+        <div class="popup popup-time">
+            <div class="title">
+                Buy Time
+            </div>
+            <div class="message">
+                Spend 2000 points to buy 2 more minutes
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
+                <button class="btn-time popup-btn-js">Buy</button>
+            </div>
+        </div>
+    </div>
+    <!-- Surrender -->
+    <div class="popup-overlay popup-overlay-surrender">
+        <div class="popup popup-surrender">
+            <div class="title">
+                Surrender
+            </div>
+            <div class="message">
+                Spend 2000 points to swap again
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
+                <button class="btn-surrender popup-btn-js">Surrender</button>
+            </div>
+        </div>
+    </div>
+    <!-- Swap -->
+    <div class="popup-overlay popup-overlay-swap">
+        <div class="popup popup-swap">
+            <div class="title">
+                Swap
+            </div>
+            <div class="message">
+                Surrender and start again
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
+                <button class="btn-swap popup-btn-js">Swap</button>
+            </div>
+        </div>
+    </div>
+    <!-- Notice -->
+    <div class="popup-overlay-notice popup-overlay-notice-not-enough">
+        <div class="popup popup-notice-not-enough">
+            <div class="title">
+                Not enough
+            </div>
+            <div class="message">
+                Not enough transaction points!
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="btn-confirm popup-btn-js">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="./assets/js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="./assets/js/js_pikachu.js"></script>
+</body>
+</html>
