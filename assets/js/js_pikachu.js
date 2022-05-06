@@ -3,14 +3,20 @@ script.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
 document.getElementsByTagName('head')[0].appendChild(script);
 
 function loadImage() {
-    let i = 0;
+    let url = "./assets/image/stage" + playerData.currentStage + "/img";
+    let extension = ".png";
     let imgArr = [];
-    for (i; i < 18; i++)
-        imgArr.push("./assets/image/item/img" + i + ".jpg");
+    for (let i = 0; i < 18; i++) {
+        if ((playerData.currentStage === 2 && i >= 16) || (playerData.currentStage === 3 && i >= 17))
+            imgArr.push(url + 0 + extension)
+        else imgArr.push(url + i + extension)
+    }
     return imgArr;
 }
 
 function createGameBoard(row, col) {
+    $(".toolbar__stage").text("Stage " + playerData.currentStage)
+
     let arrGameBoard = Array.from({length: row + 2}, () => Array.from({length: col + 2}, () => 0));
     let unfilledItemList = new Array();
     let arrImage = loadImage();
@@ -47,12 +53,49 @@ function createGameBoard(row, col) {
         $("#btn" + rdX2 + "-" + rdY2).css("background-image", "url(\"" + bgImg + "\")");
     }
 
+    if (playerData.currentStage === 3) {
+        for (let i = 1; i < arrGameBoard.length - 1; i++)
+            for (let j = 1; j < arrGameBoard[i].length - 1; j++) {
+                let btn = $("#btn" + i + "-" + j)
+                let backgroundImage = btn.css("background-image")
+                if (backgroundImage.substring(backgroundImage.length - 10, backgroundImage.length - 2) === 'img0.png') {
+                    btn.addClass("game-board__item--ice")
+                    btn.attr("disabled", true)
+                }
+            }
+    }
+
+    // background & rule
+    $('.popup-overlay-notice-rule').css('display', 'block')
+    switch (playerData.currentStage) {
+        case 1:
+            $('.message-rule').text("Try to match all pokemons to win!")
+            break
+        case 2:
+            $('.message-rule').text("Collect all suns to win!")
+            break
+        case 3:
+            $('.message-rule').text("Ice block prevents you from winning!")
+            break
+        case 4:
+            $('.message-rule').text("Water type Pokemon that dives and emerges continuously!")
+            break
+        case 5:
+            $('.message-rule').text("Ghost type Pokemon steal your time & points whenever you failed to match them!")
+            break
+        case 6:
+            $('.message-rule').text("The wind blows them to the left side of the board!")
+            break
+        default:
+            $('.message-rule').text("Try your best!")
+    }
+    $("#main-container").css("background-image", "url('./assets/image/background/background-" + playerData.currentStage + ".jpg')")
+
     return arrGameBoard;
 }
 
 function createInteraction() {
     $(".game-board__item").click(function () {
-        console.log($(this))
         if (selectingItem === null) {
             $(this).addClass("game-board__item--selecting");
             selectingItem = $(this)
@@ -63,7 +106,7 @@ function createInteraction() {
             let currentX = Number($(this).attr("x"));
             let currentY = Number($(this).attr("y"));
 
-            if (selectingItem.css("background-image") === currentItem.css("background-image"))
+            if (selectingItem.css("background-image") === currentItem.css("background-image")) {
                 if (checkTwoPoint(selectingX, selectingY, currentX, currentY) != null) {
                     $(selectingItem).addClass("game-board__item--hidden");
                     $(selectingItem).attr("disabled", true);
@@ -72,34 +115,43 @@ function createInteraction() {
 
                     arrGameBoard[currentX][currentY] = 0;
                     arrGameBoard[selectingX][selectingY] = 0;
-                    console.log(arrGameBoard);
                     playerData.score += 50;
                     $(".toolbar__score").text("Your score: " + playerData.score);
-                }
+
+                    console.log(arrGameBoard)
+                    moveToLeftSide()
+                    checkWinCondition()
+                } else stealTimeScore()
+            } else stealTimeScore()
+
 
             $(selectingItem).removeClass("game-board__item--selecting");
             selectingItem = null;
             selectingX = -1;
             selectingY = -1;
+
         }
-    });
+    })
 }
 
 //init run
-let arrGameBoard = createGameBoard(10, 15);
-console.log(arrGameBoard)
-createInteraction();
-
-let selectingItem = null;
-let selectingX = -1;
-let selectingY = -1;
 let playerData = {
     score: 0,
     currentStage: 1,
+    maxStage: 6,
     time: 10 * 60,
-};
-let timeLeft = playerData.time;
-let selectingButton = null;
+    win: false,
+}
+
+let arrGameBoard = createGameBoard(10, 15)
+createInteraction()
+
+let selectingItem = null
+let selectingX = -1
+let selectingY = -1
+
+let timeLeft = playerData.time
+let selectingButton = null
 
 $(".tool-btn").click(function () {
     if (selectingButton === null) {
@@ -116,33 +168,59 @@ $(".tool-btn").click(function () {
 });
 
 $(".popup-btn-js").click(function () {
-    if ($(this).hasClass("btn-restart") || $(this).hasClass("btn-surrender")) {
-        playerData.currentStage = 1;
-        timeLeft = playerData.time + 5;
-        playerData.score = 0;
-        restartGame();
-    } else if ($(this).hasClass("btn-time")) {
-        if (playerData.score >= 2000) {
-            playerData.score -= 2000;
-            timeLeft += 120;
-        } else
-            $(".popup-overlay-notice-not-enough").css("display", "block")
-    } else if ($(this).hasClass("btn-confirm"))
-        $(".popup-overlay-notice").css("display", "none")
-    else if ($(this).hasClass("btn-swap")) {
-        if (playerData.score >= 0) {
-            playerData.score -= 0;
-            swapGameBoard();
-        } else
-            $(".popup-overlay-notice-not-enough").css("display", "block")
+        switch ($(this).attr('typeBtn')) {
+            case 'btn-restart':
+                restartGame()
+                break
+            case 'btn-surrender':
+                restartGame()
+                break
+            case 'btn-time':
+                if (playerData.score >= 2000) {
+                    playerData.score -= 2000
+                    timeLeft += 120
+                } else
+                    $(".popup-overlay-notice-not-enough").css("display", "block")
+                break
+            case 'btn-swap':
+                if (playerData.score >= 2000) {
+                    playerData.score -= 2000
+                    swapGameBoard()
+                } else
+                    $(".popup-overlay-notice-not-enough").css("display", "block")
+                break
+            case 'btn-boom':
+                if (playerData.score >= 500) {
+                    playerData.score -= 500
+                    destroyPokemon()
+                    moveToLeftSide()
+                    setTimeout(function () {
+                        checkWinCondition()
+                    }, 2500)
+                } else
+                    $(".popup-overlay-notice-not-enough").css("display", "block")
+                break
+            case 'btn-confirm':
+                $(".popup-overlay-notice").css("display", "none")
+                break
+            case 'btn-won':
+                $(".popup-overlay-won").css("display", "none")
+                playerData.win = false
+                playerData.currentStage += 1
+                timeLeft = playerData.time + 5
+                nextStage()
+                break
+            default:
+        }
+
+        $(".toolbar__score").text("Your score: " + playerData.score)
+        $(".popup-overlay").css("display", "none")
+        $("#" + selectingButton).removeClass("active")
+        selectingButton = null
     }
+)
 
-    $(".toolbar__score").text("Your score: " + playerData.score);
-    $(".popup-overlay").css("display", "none")
-    $("#" + selectingButton).removeClass("active")
-    selectingButton = null
-})
-
+// 1s loop
 setInterval(() => {
     timeLeft -= 1;
     let timeWidth = timeLeft / playerData.time * 100;
@@ -171,8 +249,13 @@ setInterval(() => {
         $(".popup-overlay-" + selectingButton).css("display", "block")
     }
 
-    $(".time-bar__time-remaining").css("width", timeWidth + "%");
-}, 1000);
+    $(".time-bar__time-remaining").css("width", timeWidth + "%")
+}, 1000)
+
+setInterval(() => {
+    if (playerData.currentStage === 4)
+        swim()
+}, 5000)
 
 // check condition
 function checkLineX(y1, y2, x) {
@@ -350,46 +433,216 @@ function checkTwoPoint(x1, y1, x2, y2) {
 }
 
 function restartGame() {
+    playerData.currentStage = 1
+    timeLeft = playerData.time + 5
+    playerData.score = 0
+
     $(".main__game-board-js").empty()
     arrGameBoard = createGameBoard(10, 15)
     createInteraction()
 }
 
-function swapGameBoard() {
-    for (let i = 0; i < 150; i++) {
-        let x1 = Math.floor(Math.random() * 10) + 1
-        let y1 = Math.floor(Math.random() * 15) + 1
-        let x2 = Math.floor(Math.random() * 10) + 1
-        let y2 = Math.floor(Math.random() * 15) + 1
+function nextStage() {
+    $(".main__game-board-js").empty()
+    setTimeout(function () {
+        arrGameBoard = createGameBoard(10, 15)
+        createInteraction()
+    }, 500)
+}
 
-        let i1 = $("#btn" + x1 + "-" + y1)
-        let i2 = $("#btn" + x2 + "-" + y2)
-        console.log(i1, i2)
-        swap(i1, i2)
+function swapGameBoard() {
+    let arrImage = loadImage()
+
+    let existList = []
+    for (let i = 1; i < arrGameBoard.length - 1; i++)
+        for (let j = 1; j < arrGameBoard[i].length - 1; j++)
+            if (arrGameBoard[i][j] != 0)
+                existList.push("#btn" + i + "-" + j)
+
+    while (existList.length > 0) {
+        let rdIndex = Math.floor(Math.random() * existList.length)
+        let item = existList[rdIndex]
+        if (rdIndex > -1)
+            existList.splice(rdIndex, 1)
+        for (let i = 0; i < existList.length; i++)
+            if ($(existList[i]).css("background-image") === $(item).css("background-image")) {
+                let rdImage = arrImage[Math.floor(Math.random() * arrImage.length)]
+                $(item).css("background-image", "url(\"" + rdImage + "\"")
+                $(existList[i]).css("background-image", "url(\"" + rdImage + "\"")
+                existList.splice(i, 1)
+                break
+            }
+    }
+}
+
+function destroyPokemon() {
+    let existList = []
+    for (let i = 1; i < arrGameBoard.length - 1; i++)
+        for (let j = 1; j < arrGameBoard[i].length - 1; j++)
+            if (arrGameBoard[i][j] != 0)
+                existList.push("#btn" + i + "-" + j)
+    let selectedList = []
+
+    if (existList.length > 10)
+        while (selectedList.length < 10) {
+            let rdIndex = Math.floor(Math.random() * existList.length)
+            let item = existList[rdIndex]
+            selectedList.push(item)
+            let temp
+            let isFound = false
+            if (rdIndex > -1)
+                temp = existList.splice(rdIndex, 1)
+
+            for (let i = 0; i < existList.length; i++)
+                if ($(existList[i]).css("background-image") === $(item).css("background-image")) {
+                    selectedList.push($(existList[i]))
+                    existList.splice(i, 1)
+                    isFound = true
+                    break
+                }
+            if (!isFound) {
+                existList.push(temp)
+                selectedList.pop()
+            }
+        }
+    else selectedList = existList
+
+    for (const e of selectedList) {
+        let x = Number($(e).attr('x'))
+        let y = Number($(e).attr('y'))
+
+        $(e).addClass('game-board__item--boom')
+        arrGameBoard[x][y] = 0
+        $(e).attr("disabled", true)
+        setTimeout(function () {
+            $(e).addClass('game-board__item--hidden')
+            if (playerData.currentStage === 3)
+                $(e).removeClass('game-board__item--ice')
+        }, 2500)
     }
 
-    function swap(i1, i2) {
-        let x1 = Number(i1.attr('x'))
-        let y1 = Number(i1.attr('y'))
-        let x2 = Number(i2.attr('x'))
-        let y2 = Number(i2.attr('y'))
+}
 
-        let tempValue = arrGameBoard[x1][y1]
-        arrGameBoard[x1][y1] = arrGameBoard[x2][y2]
-        arrGameBoard[x2][y2] = tempValue
+function checkWinCondition() {
+    let isFound = false
+    if (playerData.currentStage === 2)
+        for (let i = 1; i < arrGameBoard.length - 1; i++)
+            for (let j = 1; j < arrGameBoard[i].length - 1; j++) {
+                let backgroundImage = $("#btn" + i + "-" + j).css("background-image")
+                if (backgroundImage.substring(backgroundImage.length - 10, backgroundImage.length - 2) === "img0.png") {
+                    isFound = true
+                    break
+                }
+            }
+    else if (playerData.currentStage === 3)
+        for (let i = 1; i < arrGameBoard.length - 1; i++)
+            for (let j = 1; j < arrGameBoard[i].length - 1; j++) {
+                let backgroundImage = $("#btn" + i + "-" + j).css("background-image")
+                if (backgroundImage.substring(backgroundImage.length - 10, backgroundImage.length - 2) !== "img0.png")
+                    if (arrGameBoard[i][j] !== 0) {
+                        isFound = true
+                        break
+                    }
+            }
+    else {
+        for (let i = 1; i < arrGameBoard.length - 1; i++)
+            for (let j = 1; j < arrGameBoard[i].length - 1; j++)
+                if (arrGameBoard[i][j] !== 0) {
+                    isFound = true
+                    break
+                }
+    }
 
-        let tempStyle = i1.attr('style')
-        let tempID = i1.attr('id')
+    if (!isFound) {
+        playerData.win = true
+        if (playerData.currentStage < playerData.maxStage)
+            $(".popup-overlay-notice-won").css("display", "block")
+        else
+            $('.notice-won--lastStage').css('display', 'block')
+    }
+}
 
-        i1.attr('x', x2)
-        i1.attr('y', y2)
-        i1.attr('style', i2.attr('style'))
-        i1.attr('id', i2.attr('id'))
+function swim() {
+    let emptyList = []
+    let existList = []
+    for (let i = 1; i < arrGameBoard.length - 1; i++)
+        for (let j = 1; j < arrGameBoard[i].length - 1; j++)
+            if (arrGameBoard[i][j] === 0)
+                emptyList.push('#btn' + i + '-' + j)
+            else existList.push('#btn' + i + '-' + j)
 
-        i2.attr('x', x1)
-        i2.attr('y', y1)
-        i2.attr('style', tempStyle)
-        i2.attr('id', tempID)
-        console.log(i1, i2)
+    if (emptyList.length > 0) {
+        let rdEmpty = emptyList[Math.floor(Math.random() * emptyList.length)]
+        let rdItem = existList[Math.floor(Math.random() * existList.length)]
+
+        if (rdItem !== $(selectingItem).attr('id')) {
+            $('.btn-boom--js').attr('disabled', true)
+            $('.btn-boom--js').css('cursor', 'not-allowed')
+
+            let itemImage = $(rdItem).css('background-image')
+            $(rdItem).addClass('game-board__item--dive')
+            $(rdItem).attr('disabled', true)
+            setTimeout(function () {
+                arrGameBoard[Number($(rdEmpty).attr('x'))][Number($(rdEmpty).attr('y'))] = 1
+                arrGameBoard[Number($(rdItem).attr('x'))][Number($(rdItem).attr('y'))] = 0
+                $(rdItem).css('background-image', $(rdEmpty).css('background-image'))
+                $(rdEmpty).css('background-image', itemImage)
+                $(rdItem).attr('disabled', true)
+                $(rdEmpty).attr('disabled', false)
+                $(rdItem).addClass('game-board__item--hidden')
+                $(rdEmpty).removeClass('game-board__item--hidden')
+
+                $(rdItem).attr('disabled', false)
+                $(rdItem).removeClass('game-board__item--dive')
+                $(rdEmpty).removeClass('game-board__item--boom')
+                $(rdItem).removeClass('game-board__item--boom')
+
+                $('.btn-boom--js').attr('disabled', false)
+                $('.btn-boom--js').css('cursor', 'pointer')
+            }, 1000)
+        }
+    }
+}
+
+function stealTimeScore() {
+    if (playerData.currentStage === 5) {
+        playerData.score -= 100
+        timeLeft -= 60
+        $(".time-bar__time-remaining").addClass("time-bar__time-remaining--stolen")
+        $(".toolbar__score").addClass("toolbar__score--stolen")
+        $(".toolbar__score").text("Your score: " + playerData.score)
+        $(".time-bar__time-remaining").css("width", timeLeft / playerData.time * 100 + "%")
+        setTimeout(() => {
+            $(".time-bar__time-remaining").removeClass("time-bar__time-remaining--stolen")
+            $(".toolbar__score").removeClass("toolbar__score--stolen")
+        }, 1500)
+    }
+}
+
+function moveToLeftSide() {
+    if (playerData.currentStage === 6)
+        for (let i = 1; i < arrGameBoard.length - 1; i++)
+            for (let j = 2; j < arrGameBoard[i].length - 1; j++)
+                if (arrGameBoard[i][j] !== 0) {
+                    let k = j
+                    while (k > 1)
+                        if (arrGameBoard[i][k - 1] === 0)
+                            swap($('#btn' + i + '-' + k), $('#btn' + i + '-' + --k))
+                        else break
+                }
+
+
+    function swap(item, empty) {
+        let itemImage = $(item).css('background-image')
+        arrGameBoard[Number($(empty).attr('x'))][Number($(empty).attr('y'))] = 1
+        arrGameBoard[Number($(item).attr('x'))][Number($(item).attr('y'))] = 0
+        $(item).css('background-image', $(item).css('background-image'))
+        $(empty).css('background-image', itemImage)
+        $(item).attr('disabled', true)
+        $(empty).attr('disabled', false)
+        $(item).addClass('game-board__item--hidden')
+        $(empty).removeClass('game-board__item--hidden')
+        $(empty).removeClass('game-board__item--boom')
+        $(item).removeClass('game-board__item--boom')
     }
 }

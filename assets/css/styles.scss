@@ -26,7 +26,6 @@ $purple-pastel: #C6A8DC;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("../image/background-img.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -57,6 +56,37 @@ $purple-pastel: #C6A8DC;
           border-radius: 28px;
           background-image: linear-gradient(to right, $red-pastel, $orange-pastel, $yellow-pastel, $green-pastel, $blue-pastel, $indigo-blue-pastel, $purple-pastel);
         }
+
+        @keyframes stolen {
+          0% {
+            opacity: 0;
+          }
+          15% {
+            opacity: 1;
+          }
+          30% {
+            opacity: 0;
+          }
+          45% {
+            opacity: 1;
+          }
+          60% {
+            opacity: 0;
+          }
+          75% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        .time-bar__time-remaining--stolen {
+          animation: stolen linear 1.5s;
+        }
       }
     }
 
@@ -81,10 +111,10 @@ $purple-pastel: #C6A8DC;
           transition: all linear .1s;
         }
 
-        .game-board__item--hidden {
-          background-color: transparent;
-          background-image: none !important;
-          border: none;
+        .game-board__item:hover {
+          border-width: 4px;
+          cursor: pointer;
+          border-image: conic-gradient($red-pastel, $orange-pastel, $yellow-pastel, $green-pastel, $blue-pastel, $indigo-blue-pastel, $purple-pastel, $indigo-blue-pastel, $blue-pastel, $green-pastel, $yellow-pastel, $orange-pastel, $red-pastel) 1;
         }
 
         .game-board__item--selecting {
@@ -93,10 +123,86 @@ $purple-pastel: #C6A8DC;
           border-image: conic-gradient($red-pastel, $orange-pastel, $yellow-pastel, $green-pastel, $blue-pastel, $indigo-blue-pastel, $purple-pastel, $indigo-blue-pastel, $blue-pastel, $green-pastel, $yellow-pastel, $orange-pastel, $red-pastel) 1;
         }
 
-        .game-board__item:hover {
-          border-width: 4px;
-          cursor: pointer;
-          border-image: conic-gradient($red-pastel, $orange-pastel, $yellow-pastel, $green-pastel, $blue-pastel, $indigo-blue-pastel, $purple-pastel, $indigo-blue-pastel, $blue-pastel, $green-pastel, $yellow-pastel, $orange-pastel, $red-pastel) 1;
+        .game-board__item--hidden {
+          background-color: transparent;
+          background-image: none !important;
+          border: none;
+        }
+
+        @keyframes boom {
+          0% {
+            opacity: 1;
+          }
+          5% {
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          15% {
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          25% {
+            opacity: 0;
+          }
+          30% {
+            opacity: 1;
+          }
+          40% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(3.5);
+            opacity: 0;
+          }
+        }
+
+        .game-board__item--boom {
+          animation: boom linear 3s;
+        }
+
+        .game-board__item--ice {
+          border: 1px solid $black-color;
+          background-color: $blue-pastel;
+        }
+
+        .game-board__item--ice:hover {
+          cursor: not-allowed;
+          border: 1px solid $black-color;
+        }
+
+        @keyframes dive {
+          0% {
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          15% {
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+          }
+          25% {
+            opacity: 0;
+          }
+          30% {
+            opacity: 1;
+          }
+          35% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 0;
+          }
+        }
+
+        .game-board__item--dive {
+          animation: dive linear 2s;
         }
 
       }
@@ -112,6 +218,7 @@ $purple-pastel: #C6A8DC;
     justify-content: center;
     color: $yellow-pastel;
     text-align: center;
+    text-shadow: 4px 0 0 #000, -4px 0 0 #000, 0 4px 0 #000, 0 -4px 0 #000, 2px 2px #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
 
     .toolbar__stage, .toolbar__score, .toolbar__buttons {
       width: 100%;
@@ -124,6 +231,10 @@ $purple-pastel: #C6A8DC;
 
     .toolbar__score {
       font-size: 2.4em;
+    }
+
+    .toolbar__score--stolen {
+      animation: stolen linear 1.5s;
     }
 
     .toolbar__buttons {
@@ -148,6 +259,7 @@ $purple-pastel: #C6A8DC;
           position: relative;
           transition: all linear .25s;
           cursor: pointer;
+          text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 
           &:before {
             position: absolute;
@@ -305,6 +417,19 @@ $purple-pastel: #C6A8DC;
   background-color: rgba(254, 209, 84, .9);
 }
 
+.popup-boom {
+  background-color: rgba(198, 168, 220, .9);
+}
+
 .popup-notice-not-enough {
   background-color: rgba(124, 202, 203, .9);
+}
+
+.popup-notice-won {
+  background-color: rgba(254, 189, 59, .9);
+}
+
+.popup-notice-rule {
+  color: white;
+  text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 }

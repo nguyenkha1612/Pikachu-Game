@@ -55,7 +55,7 @@
                 Your time is up!
             </div>
             <div class="popup__btn-wrapper">
-                <button class="btn-restart popup-btn-js">Restart</button>
+                <button class="popup-btn-js" typeBtn="btn-restart">Restart</button>
             </div>
         </div>
     </div>
@@ -69,8 +69,8 @@
                 Spend 2000 points to buy 2 more minutes
             </div>
             <div class="popup__btn-wrapper">
-                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
-                <button class="btn-time popup-btn-js">Buy</button>
+                <button class="button--reverse popup-btn-js" typeBtn="btn-cancel">Cancel</button>
+                <button class="popup-btn-js" typeBtn="btn-time">Buy</button>
             </div>
         </div>
     </div>
@@ -81,11 +81,11 @@
                 Surrender
             </div>
             <div class="message">
-                Spend 2000 points to swap again
+                Surrender and start again
             </div>
             <div class="popup__btn-wrapper">
-                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
-                <button class="btn-surrender popup-btn-js">Surrender</button>
+                <button class="button--reverse popup-btn-js" typeBtn="btn-cancel">Cancel</button>
+                <button class="popup-btn-js" typeBtn="btn-surrender">Surrender</button>
             </div>
         </div>
     </div>
@@ -96,11 +96,26 @@
                 Swap
             </div>
             <div class="message">
-                Surrender and start again
+                Spend 2000 points to swap again
             </div>
             <div class="popup__btn-wrapper">
-                <button class="btn-cancel button--reverse popup-btn-js">Cancel</button>
-                <button class="btn-swap popup-btn-js">Swap</button>
+                <button class="button--reverse popup-btn-js" typeBtn="btn-cancel">Cancel</button>
+                <button class="popup-btn-js" typeBtn="btn-swap">Swap</button>
+            </div>
+        </div>
+    </div>
+    <!-- Boom -->
+    <div class="popup-overlay popup-overlay-boom">
+        <div class="popup popup-boom">
+            <div class="title">
+                Boom!
+            </div>
+            <div class="message">
+                Spend 500 points to destroy 5 pairs of pokemon
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="button--reverse popup-btn-js" typeBtn="btn-cancel">Cancel</button>
+                <button class="popup-btn-js btn-boom--js" typeBtn="btn-boom">Destroy</button>
             </div>
         </div>
     </div>
@@ -114,7 +129,49 @@
                 Not enough transaction points!
             </div>
             <div class="popup__btn-wrapper">
-                <button class="btn-confirm popup-btn-js">Confirm</button>
+                <button class="popup-btn-js" typeBtn="btn-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <!-- Congratulations -->
+    <div class="popup-overlay popup-overlay-notice-won">
+        <div class="popup popup-notice-won">
+            <div class="title">
+                Congratulations!
+            </div>
+            <div class="message">
+                Gratz! You've completed all missions in this stage
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="popup-btn-js" typeBtn="btn-won">Next Stage</button>
+            </div>
+        </div>
+    </div>
+    <!-- Winner -->
+    <div class="popup-overlay notice-won--lastStage">
+        <div class="popup popup-notice-won">
+            <div class="title">
+                Congratulations!
+            </div>
+            <div class="message">
+                Gratz! You've become the new winner
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="popup-btn-js" typeBtn="btn-restart">Play Again</button>
+            </div>
+        </div>
+    </div>
+    <!-- Rule -->
+    <div class="popup-overlay-notice popup-overlay-notice-rule">
+        <div class="popup popup-notice-rule">
+            <div class="title">
+                Rule
+            </div>
+            <div class="message message-rule">
+
+            </div>
+            <div class="popup__btn-wrapper">
+                <button class="popup-btn-js" typeBtn="btn-confirm">OK</button>
             </div>
         </div>
     </div>
