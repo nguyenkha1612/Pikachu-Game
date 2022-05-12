@@ -421,15 +421,11 @@ $purple-pastel: #C6A8DC;
   background-color: rgba(198, 168, 220, .9);
 }
 
-.popup-notice-not-enough {
-  background-color: rgba(124, 202, 203, .9);
-}
-
 .popup-notice-won {
-  background-color: rgba(254, 189, 59, .9);
+  background-image: linear-gradient(to top, $purple-pastel, $indigo-blue-pastel, $blue-pastel, $green-pastel, $yellow-pastel, $orange-pastel, $red-pastel);
 }
 
-.popup-notice-rule {
+.popup-notice-rule, .popup-notice-not-enough {
   color: white;
   text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 }

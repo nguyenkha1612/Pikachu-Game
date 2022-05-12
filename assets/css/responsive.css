@@ -1,0 +1,60 @@
+@media (max-width: 1023px) {
+  #main-container {
+    min-width: 0;
+  }
+  #main-container .container__main {
+    width: 70%;
+  }
+  #main-container .container__main .main__header .time-bar {
+    width: 450px;
+    margin-top: 0;
+    border: 2px solid black;
+  }
+  #main-container .container__main .main__header .time-bar .time-bar__time-remaining {
+    padding: 8px 0;
+  }
+  #main-container .container__main .main__game-board {
+    margin-top: 18px;
+  }
+  #main-container .container__main .main__game-board .game-board__row .game-board__item {
+    width: 30px;
+    height: 30px;
+  }
+  #main-container .container__toolbar {
+    width: 30%;
+    text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  }
+  #main-container .container__toolbar .toolbar__stage, #main-container .container__toolbar .toolbar__score, #main-container .container__toolbar .toolbar__buttons {
+    margin: 6px;
+    padding: 6px;
+    font-size: 2em;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+  }
+  #main-container .container__toolbar .toolbar__buttons .button-wrapper {
+    height: 100px;
+  }
+  #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__swap, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__boom, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__time, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__surrender {
+    width: 60px;
+    height: 60px;
+  }
+  #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__swap:before, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__boom:before, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__time:before, #main-container .container__toolbar .toolbar__buttons .button-wrapper .toolbar__surrender:before {
+    font-size: 16px;
+  }
+  #main-container .container__toolbar audio {
+    height: 25px;
+  }
+
+  .popup .title {
+    font-size: 32px;
+  }
+  .popup .message {
+    font-size: 24px;
+  }
+  .popup button {
+    padding: 2px 20px;
+    font-size: 20px;
+  }
+}
+
+/*# sourceMappingURL=responsive.css.map */

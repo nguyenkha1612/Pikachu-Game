@@ -141,6 +141,10 @@ let playerData = {
     maxStage: 6,
     time: 10 * 60,
     win: false,
+    boomCost: 0,
+    boomQuality: 150,
+    swapCost: 2000,
+    timeCost: 2000,
 }
 
 let arrGameBoard = createGameBoard(10, 15)
@@ -176,22 +180,22 @@ $(".popup-btn-js").click(function () {
                 restartGame()
                 break
             case 'btn-time':
-                if (playerData.score >= 2000) {
-                    playerData.score -= 2000
+                if (playerData.score >= playerData.timeCost) {
+                    playerData.score -= playerData.timeCost
                     timeLeft += 120
                 } else
                     $(".popup-overlay-notice-not-enough").css("display", "block")
                 break
             case 'btn-swap':
-                if (playerData.score >= 2000) {
-                    playerData.score -= 2000
+                if (playerData.score >= playerData.swapCost) {
+                    playerData.score -= playerData.swapCost
                     swapGameBoard()
                 } else
                     $(".popup-overlay-notice-not-enough").css("display", "block")
                 break
             case 'btn-boom':
-                if (playerData.score >= 500) {
-                    playerData.score -= 500
+                if (playerData.score >= playerData.boomCost) {
+                    playerData.score -= playerData.boomCost
                     destroyPokemon()
                     moveToLeftSide()
                     setTimeout(function () {
@@ -483,8 +487,8 @@ function destroyPokemon() {
                 existList.push("#btn" + i + "-" + j)
     let selectedList = []
 
-    if (existList.length > 10)
-        while (selectedList.length < 10) {
+    if (existList.length > playerData.boomQuality)
+        while (selectedList.length < playerData.boomQuality) {
             let rdIndex = Math.floor(Math.random() * existList.length)
             let item = existList[rdIndex]
             selectedList.push(item)

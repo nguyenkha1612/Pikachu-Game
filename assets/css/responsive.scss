@@ -1,0 +1,79 @@
+@media (max-width: 1023px) {
+
+  #main-container {
+    min-width: 0;
+    .container__main {
+      width: 70%;
+
+      .main__header {
+        .time-bar {
+          width: 450px;
+          margin-top: 0;
+          border: 2px solid black;
+
+          .time-bar__time-remaining {
+            padding: 8px 0;
+          }
+        }
+      }
+
+      .main__game-board {
+        margin-top: 18px;
+
+        .game-board__row {
+          .game-board__item {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      }
+    }
+
+    .container__toolbar {
+      width: 30%;
+      text-shadow: 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+
+      .toolbar__stage, .toolbar__score, .toolbar__buttons {
+        margin: 6px;
+        padding: 6px;
+        font-size: 2.0em;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 6px;
+      }
+
+      .toolbar__buttons {
+        .button-wrapper {
+          height: 100px;
+
+          .toolbar__swap, .toolbar__boom, .toolbar__time, .toolbar__surrender {
+            width: 60px;
+            height: 60px;
+
+            &:before {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+
+      audio {
+        height: 25px;
+      }
+    }
+  }
+
+  .popup {
+    .title {
+      font-size: 32px;
+    }
+
+    .message {
+      font-size: 24px;
+    }
+
+    button {
+      padding: 2px 20px;
+      font-size: 20px;
+    }
+  }
+}
