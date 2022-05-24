@@ -107,7 +107,7 @@ function createInteraction() {
             let currentY = Number($(this).attr("y"));
 
             if (selectingItem.css("background-image") === currentItem.css("background-image")) {
-                if (checkTwoPoint(selectingX, selectingY, currentX, currentY) != null) {
+                if (checkTwoPoint(selectingX, selectingY, currentX, currentY)) {
                     $(selectingItem).addClass("game-board__item--hidden");
                     $(selectingItem).attr("disabled", true);
                     $(this).addClass("game-board__item--hidden");
@@ -141,8 +141,8 @@ let playerData = {
     maxStage: 6,
     time: 10 * 60,
     win: false,
-    boomCost: 0,
-    boomQuality: 150,
+    boomCost: 500,
+    boomQuality: 10,
     swapCost: 2000,
     timeCost: 2000,
 }
@@ -197,9 +197,9 @@ $(".popup-btn-js").click(function () {
                 if (playerData.score >= playerData.boomCost) {
                     playerData.score -= playerData.boomCost
                     destroyPokemon()
-                    moveToLeftSide()
                     setTimeout(function () {
                         checkWinCondition()
+                        moveToLeftSide()
                     }, 2500)
                 } else
                     $(".popup-overlay-notice-not-enough").css("display", "block")
@@ -262,178 +262,122 @@ setInterval(() => {
 }, 5000)
 
 // check condition
-function checkLineX(y1, y2, x) {
-    let min = Math.min(y1, y2);
-    let max = Math.max(y1, y2);
-    for (let y = min + 1; y < max; y++) // met another one
-        if (arrGameBoard[x][y] != 0)
-            return false;
-    return true;
-}
-
-function checkLineY(x1, x2, y) {
-    let min = Math.min(x1, x2);
-    let max = Math.max(x1, x2);
-    for (let x = min + 1; x < max; x++)
-        if (arrGameBoard[x][y] != 0)
-            return false;
-    return true;
-}
-
-function checkRectX(x1, y1, x2, y2) {
-    let pMinY = {x: x1, y: y1};
-    let pMaxY = {x: x2, y: y2};
-    if (y1 > y2) {
-        pMinY = {x: x2, y: y2}
-        pMaxY = {x: x1, y: y1}
-    }
-    for (let y = pMinY.y; y <= pMaxY.y; y++) {
-        if (y > pMinY.y && arrGameBoard[pMinY.x][y] != 0)
-            return false;
-        if ((arrGameBoard[pMaxY.x][y] == 0) && checkLineY(pMinY.x, pMaxY.x, y) && checkLineX(y, pMaxY.y, pMaxY.x)) {
-            console.log("(" + pMinY.x + "," + pMinY.y + ") -> ("
-                + pMinY.x + "," + y + ") -> (" + pMaxY.x + "," + y
-                + ") -> (" + pMaxY.x + "," + pMaxY.y + ")");
-            return true;
-        }
-    }
-    return false;
-}
-
-function checkRectY(x1, y1, x2, y2) {
-    let pMinX = {x: x1, y: y1};
-    let pMaxX = {x: x2, y: y2};
-    if (x1 > x2) {
-        pMinX = {x: x2, y: y2}
-        pMaxX = {x: x1, y: y1}
-    }
-    for (let x = pMinX.x; x <= pMaxX.x; x++) {
-        if (x > pMinX.x && arrGameBoard[x][pMinX.y] != 0)
-            return false;
-        if ((arrGameBoard[x][pMaxX.y] == 0) && checkLineX(pMinX.y, pMaxX.y, x) && checkLineY(x, pMaxX.x, pMaxX.y)) {
-            console.log("(" + pMinX.x + "," + pMinX.y + ") -> (" + x
-                + "," + pMinX.y + ") -> (" + x + "," + pMaxX.y
-                + ") -> (" + pMaxX.x + "," + pMaxX.y + ")");
-            return true;
-        }
-    }
-    return false;
-}
-
-function checkMoreLineX(x1, y1, x2, y2, type) {
-    let pMinY = {x: x1, y: y1};
-    let pMaxY = {x: x2, y: y2};
-    if (y1 > y2) {
-        pMinY = {x: x2, y: y2}
-        pMaxY = {x: x1, y: y1}
-    }
-    let y = pMaxY.y + type;
-    let row = pMinY.x;
-    let colFinish = pMaxY.y;
-    if (type == -1) {
-        colFinish = pMinY.y;
-        y = pMinY.y + type;
-        row = pMaxY.x;
-    }
-
-    if ((arrGameBoard[row][colFinish] == 0 || pMinY.y == pMaxY.y) && checkLineX(pMinY.y, pMaxY.y, row)) {
-        while (arrGameBoard[pMinY.x][y] == 0 && arrGameBoard[pMaxY.x][y] == 0) {
-            if (checkLineY(pMinY.x, pMaxY.x, y)) {
-                console.log("TH X " + type)
-                console.log("(" + pMinY.x + "," + pMinY.y + ") -> ("
-                    + pMinY.x + "," + y + ") -> (" + pMaxY.x + "," + y
-                    + ") -> (" + pMaxY.x + "," + pMaxY.y + ")")
-                return true;
-            }
-            y += type;
-        }
-    }
-    return false;
-}
-
-function checkMoreLineY(x1, y1, x2, y2, type) {
-    let pMinX = {x: x1, y: y1};
-    let pMaxX = {x: x2, y: y2};
-    if (x1 > x2) {
-        pMinX = {x: x2, y: y2}
-        pMaxX = {x: x1, y: y1}
-    }
-    let x = pMaxX.x + type;
-    let col = pMinX.y;
-    let rowFinish = pMaxX.x;
-    if (type == -1) {
-        rowFinish = pMinX.x;
-        x = pMinX.x + type;
-        col = pMaxX.y;
-    }
-    console.log("x " + x)
-    console.log("col " + col)
-    console.log("type " + type)
-
-    if ((arrGameBoard[rowFinish][col] == 0 || pMinX.x == pMaxX.x) && checkLineY(pMinX.x, pMaxX.x, col)) {
-        while (arrGameBoard[x][pMinX.y] == 0 && arrGameBoard[x][pMaxX.y] == 0) {
-            if (checkLineX(pMinX.y, pMaxX.y, x)) {
-                console.log("TH Y " + type);
-                console.log("(" + pMinX.x + "," + pMinX.y + ") -> ("
-                    + x + "," + pMinX.y + ") -> (" + x + "," + pMaxX.y
-                    + ") -> (" + pMaxX.x + "," + pMaxX.y + ")");
-                return true;
-            }
-            x += type;
-        }
-    }
-    return false;
-}
-
 function checkTwoPoint(x1, y1, x2, y2) {
-    let p1 = {x: x1, y: y1}
-    let p2 = {x: x2, y: y2}
-    if (!(x1 === x2 && y1 === y2) && arrGameBoard[x1][y1] == arrGameBoard[x2][y2]) {
-        if (x1 == x2) {
-            if (checkLineX(y1, y2, x1)) {
-                console.log("ok line x");
-                return [p1, p2];
-            }
-        }
-        // check line with y
-        if (y1 == y2) {
-            if (checkLineY(x1, x2, y1)) {
-                console.log("ok line y");
-                return [p1, p2];
-            }
-        }
-        // check in rectangle with x
-        if (checkRectX(x1, y1, x2, y2)) {
-            console.log("rect x");
-            return [p1, p2];
-        }
-        // check in rectangle with y
-        if (checkRectY(x1, y1, x2, y2)) {
-            console.log("rect y");
-            return [p1, p2];
-        }
-        // check more right
-        if (checkMoreLineX(x1, y1, x2, y2, 1)) {
-            console.log("more right");
-            return [p1, p2];
-        }
-        // check more left
-        if (checkMoreLineX(x1, y1, x2, y2, -1)) {
-            console.log("more left");
-            return [p1, p2];
-        }
-        // check more down
-        if (checkMoreLineY(x1, y1, x2, y2, 1)) {
-            console.log("more down");
-            return [p1, p2];
-        }
-        // check more up
-        if (checkMoreLineY(x1, y1, x2, y2, -1)) {
-            console.log("more up");
-            return [p1, p2];
-        }
+    function checkLineX(y1, y2, x) {
+        let min = Math.min(y1, y2)
+        let max = Math.max(y1, y2)
+        for (let y = min + 1; y < max; y++)
+            if (arrGameBoard[x][y] != 0) // met another one
+                return false
+        return true
     }
-    return null;
+
+    function checkLineY(x1, x2, y) {
+        let min = Math.min(x1, x2)
+        let max = Math.max(x1, x2)
+        for (let x = min + 1; x < max; x++)
+            if (arrGameBoard[x][y] != 0)
+                return false
+        return true
+    }
+
+    function checkRectX(x1, y1, x2, y2) {
+        let pMinY = {x: x1, y: y1}
+        let pMaxY = {x: x2, y: y2}
+        if (y1 > y2) {
+            pMinY = {x: x2, y: y2}
+            pMaxY = {x: x1, y: y1}
+        }
+        for (let y = pMinY.y; y <= pMaxY.y; y++) {
+            if (y > pMinY.y && arrGameBoard[pMinY.x][y] != 0)
+                return false
+            if ((arrGameBoard[pMaxY.x][y] == 0) && checkLineY(pMinY.x, pMaxY.x, y) && checkLineX(y, pMaxY.y, pMaxY.x))
+                return true
+        }
+        return false
+    }
+
+    function checkRectY(x1, y1, x2, y2) {
+        let pMinX = {x: x1, y: y1}
+        let pMaxX = {x: x2, y: y2}
+        if (x1 > x2) {
+            pMinX = {x: x2, y: y2}
+            pMaxX = {x: x1, y: y1}
+        }
+        for (let x = pMinX.x; x <= pMaxX.x; x++) {
+            if (x > pMinX.x && arrGameBoard[x][pMinX.y] != 0)
+                return false
+            if ((arrGameBoard[x][pMaxX.y] == 0) && checkLineX(pMinX.y, pMaxX.y, x) && checkLineY(x, pMaxX.x, pMaxX.y))
+                return true
+        }
+        return false
+    }
+
+    function checkMoreLineX(x1, y1, x2, y2, type) {
+        let pMinY = {x: x1, y: y1}
+        let pMaxY = {x: x2, y: y2}
+        if (y1 > y2) {
+            pMinY = {x: x2, y: y2}
+            pMaxY = {x: x1, y: y1}
+        }
+        let y = pMaxY.y + type
+        let row = pMinY.x
+        let colFinish = pMaxY.y
+        if (type == -1) {
+            colFinish = pMinY.y
+            y = pMinY.y + type
+            row = pMaxY.x
+        }
+
+        if ((arrGameBoard[row][colFinish] == 0 || pMinY.y == pMaxY.y) && checkLineX(pMinY.y, pMaxY.y, row))
+            while (arrGameBoard[pMinY.x][y] == 0 && arrGameBoard[pMaxY.x][y] == 0) {
+                if (checkLineY(pMinY.x, pMaxY.x, y))
+                    return true
+                y += type
+            }
+        return false
+    }
+
+    function checkMoreLineY(x1, y1, x2, y2, type) {
+        let pMinX = {x: x1, y: y1}
+        let pMaxX = {x: x2, y: y2}
+        if (x1 > x2) {
+            pMinX = {x: x2, y: y2}
+            pMaxX = {x: x1, y: y1}
+        }
+        let x = pMaxX.x + type
+        let col = pMinX.y
+        let rowFinish = pMaxX.x
+        if (type == -1) {
+            rowFinish = pMinX.x
+            x = pMinX.x + type
+            col = pMaxX.y
+        }
+
+        if ((arrGameBoard[rowFinish][col] == 0 || pMinX.x == pMaxX.x) && checkLineY(pMinX.x, pMaxX.x, col))
+            while (arrGameBoard[x][pMinX.y] == 0 && arrGameBoard[x][pMaxX.y] == 0) {
+                if (checkLineX(pMinX.y, pMaxX.y, x))
+                    return true
+                x += type
+            }
+        return false
+    }
+
+    if (!(x1 === x2 && y1 === y2) && arrGameBoard[x1][y1] == arrGameBoard[x2][y2]) {
+        if (x1 == x2)
+            if (checkLineX(y1, y2, x1))
+                return true
+        if (y1 == y2)
+            if (checkLineY(x1, x2, y1))
+                return true
+        return checkRectX(x1, y1, x2, y2)
+            || checkRectY(x1, y1, x2, y2)
+            || checkMoreLineX(x1, y1, x2, y2, 1)
+            || checkMoreLineX(x1, y1, x2, y2, -1)
+            || checkMoreLineY(x1, y1, x2, y2, 1)
+            || checkMoreLineY(x1, y1, x2, y2, -1)
+    }
+    return false
 }
 
 function restartGame() {
@@ -583,6 +527,9 @@ function swim() {
             $('.btn-boom--js').attr('disabled', true)
             $('.btn-boom--js').css('cursor', 'not-allowed')
 
+            $('.btn-swap--js').attr('disabled', true)
+            $('.btn-swap--js').css('cursor', 'not-allowed')
+
             let itemImage = $(rdItem).css('background-image')
             $(rdItem).addClass('game-board__item--dive')
             $(rdItem).attr('disabled', true)
@@ -600,6 +547,9 @@ function swim() {
                 $(rdItem).removeClass('game-board__item--dive')
                 $(rdEmpty).removeClass('game-board__item--boom')
                 $(rdItem).removeClass('game-board__item--boom')
+
+                $('.btn-swap--js').attr('disabled', false)
+                $('.btn-swap--js').css('cursor', 'pointer')
 
                 $('.btn-boom--js').attr('disabled', false)
                 $('.btn-boom--js').css('cursor', 'pointer')
